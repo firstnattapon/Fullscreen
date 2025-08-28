@@ -131,4 +131,4 @@ html = f"""
 """
 
 # หมายเหตุ: height มีผลต่อพื้นที่ component ตอนฝังในหน้า Streamlit
-components.html(html, height=2500, scrolling=False)
+components.html(html, height=2000, scrolling=False)
