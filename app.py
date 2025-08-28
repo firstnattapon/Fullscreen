@@ -3,147 +3,38 @@ import streamlit as st
 import streamlit.components.v1 as components
 from urllib.parse import urlparse
 
-# ---- Page setup: กำหนดหน้าแบบกว้าง + ซ่อน header/sidebar/footer ----
-st.set_page_config(
-    page_title="Fullscreen Wrapper",
-    layout="wide",
-    initial_sidebar_state="collapsed",
-)
+# ... ส่วนตั้งค่าหน้าเว็บเดิม ...
 
-st.markdown(
-    """
-    <style>
-      #MainMenu {visibility: hidden;}
-      header {visibility: hidden;}
-      footer {visibility: hidden;}
-      /* ลบ padding รอบ content ให้เต็มจอมากที่สุด */
-      .block-container {padding: 0 !important; margin: 0 !important; max-width: 100% !important;}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# ---- กำหนด URL ปลายทาง (ค่าเริ่มต้นเป็นลิงก์ของคุณ) ----
-DEFAULT_URL = "https://monica.im/share/artifact?id=3vibZExEztirQ7KXRgqauG"
-
-# รองรับทั้ง st.query_params (ใหม่) และ experimental_get_query_params (เก่า)
-try:
-    target_url = st.query_params.get("u", DEFAULT_URL)
-except Exception:
-    target_url = st.experimental_get_query_params().get("u", [DEFAULT_URL])[0]
-
-# ---- Whitelist โดเมน (กันคนยิงไปเว็บเสี่ยง) ----
-ALLOWED = {
-    "monica.im",
-    "github.com",
-    "raw.githubusercontent.com",
-    "streamlit.io",
-    "streamlit.app",
-}
-netloc = urlparse(target_url).netloc.split(":")[0].lower()
-allowed = any(netloc == d or netloc.endswith("." + d) for d in ALLOWED)
-if not allowed:
-    st.error(f"โดเมนนี้ไม่ได้อยู่ในรายการที่อนุญาต: {netloc}")
-    st.stop()
-
-# ---- HTML ภายใน component: iframe + ปุ่ม Fullscreen/Reload + Wake Lock ----
 html = f"""
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<style>
-  html, body, #root {{
-    height: 100%;
-    margin: 0;
-    background: #000;
-  }}
-  #root {{
-    position: fixed; inset: 0;
-    padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }}
-  iframe#web {{
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    border: 0; display: block;
-    background: #000;
-  }}
-  #controls {{
-    position: fixed; right: 12px; top: 12px;
-    z-index: 9999; display: flex; gap: 8px;
-  }}
-  button {{
-    font: inherit;
-    padding: 8px 12px;
-    border-radius: 12px;
-    border: 0;
-    box-shadow: 0 1px 4px rgba(0,0,0,.25);
-    background: #fff;
-  }}
-</style>
+<!-- ส่วน head เดิม ... -->
 </head>
 <body>
   <div id="root">
-    <iframe id="web"
-      src="{target_url}"
-      allow="fullscreen; autoplay; clipboard-read; clipboard-write; camera; microphone; geolocation; encrypted-media; picture-in-picture; web-share"
-      allowfullscreen
-      referrerpolicy="no-referrer-when-downgrade"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox">
-    </iframe>
+    <iframe id="web" src="{target_url}" ... ></iframe>
 
     <div id="controls">
-      <button id="fs">⛶ Fullscreen</button>
       <button id="rel">↻ Reload</button>
     </div>
   </div>
 
   <script>
-    // Fullscreen (ต้องกดปุ่มเพราะเบราว์เซอร์บังคับให้เริ่มจาก user gesture)
-    const fsBtn = document.getElementById('fs');
     const relBtn = document.getElementById('rel');
-    fsBtn.addEventListener('click', async () => {{
-      try {{
-        if (!document.fullscreenElement) {{
-          await document.documentElement.requestFullscreen();
-          fsBtn.textContent = '⛶ Exit';
-        }} else {{
-          await document.exitFullscreen();
-          fsBtn.textContent = '⛶ Fullscreen';
-        }}
-      }} catch (e) {{ console.log(e); }}
-    }});
     relBtn.addEventListener('click', () => {{
       const iframe = document.getElementById('web');
       try {{
         iframe.contentWindow.location.reload();
       }} catch (e) {{
-        // cross-origin อาจโดนบล็อก: fallback โหลด src เดิม
         iframe.src = iframe.src;
       }}
     }});
 
-    // Wake Lock: กันจอดับ (ถ้าเบราว์เซอร์รองรับ)
-    if ('wakeLock' in navigator) {{
-      let lock;
-      const requestLock = async () => {{
-        try {{ lock = await navigator.wakeLock.request('screen'); }}
-        catch (e) {{ /* เงียบไว้ก็ได้ */ }}
-      }};
-      requestLock();
-      document.addEventListener('visibilitychange', () => {{
-        if (document.visibilityState === 'visible') requestLock();
-      }});
-    }}
+    // Wake Lock ส่วนเดิม ...
   </script>
 </body>
 </html>
 """
 
-# หมายเหตุ: height ตรงนี้มีผลเฉพาะตอน "ยังไม่กด Fullscreen" เท่านั้น
-# พอกดปุ่ม Fullscreen แล้ว ตัว component จะกินเต็มจอมือถือ
-components.html(html, height=2500, scrolling=False)
+components.html(html, height=2000 , scrolling=False)
