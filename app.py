@@ -13,7 +13,7 @@ html = f"""
 </head>
 <body>
   <div id="root">
-    <iframe id="web" src="{target_url}" ... ></iframe>
+    <iframe id="web" src="{https://monica.im/share/artifact?id=3vibZExEztirQ7KXRgqauG}" ... ></iframe>
 
     <div id="controls">
       <button id="rel">↻ Reload</button>
