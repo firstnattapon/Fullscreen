@@ -24,7 +24,7 @@ st.markdown(
 )
 
 # ---- กำหนด URL ปลายทาง (ค่าเริ่มต้นเป็นลิงก์ของคุณ) ----
-DEFAULT_URL = "https://monica.im/share/artifact?id=YwSD4pEZBEMLVkHTxiLq3c"
+DEFAULT_URL = "https://monica.im/share/artifact?id=3vibZExEztirQ7KXRgqauG"
 
 # รองรับทั้ง st.query_params (ใหม่) และ experimental_get_query_params (เก่า)
 try:
