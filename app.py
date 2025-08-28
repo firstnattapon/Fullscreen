@@ -146,4 +146,4 @@ html = f"""
 
 # หมายเหตุ: height ตรงนี้มีผลเฉพาะตอน "ยังไม่กด Fullscreen" เท่านั้น
 # พอกดปุ่ม Fullscreen แล้ว ตัว component จะกินเต็มจอมือถือ
-components.html(html, height=1500, scrolling=False)
+components.html(html, height=2500, scrolling=False)
